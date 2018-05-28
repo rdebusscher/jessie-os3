@@ -27,14 +27,27 @@ import java.util.Set;
 @ApplicationScoped
 public class CDICreator extends AbstractCreator {
 
-    public void createCDIFiles(JessieModel model) {
+    public void createCDIFilesForWeb(JessieModel model) {
         Set<String> alternatives = model.getParameter(JessieModel.Parameter.ALTERNATIVES);
         Map<String, String> variables = model.getParameter(JessieModel.Parameter.VARIABLES);
 
         String webInfDirectory = model.getDirectory() + "/" + MavenCreator.SRC_MAIN_WEBAPP + "/WEB-INF";
+        directoryCreator.createDirectory(webInfDirectory);
 
-        String webXMLContents = thymeleafEngine.processFile("beans.xml", alternatives, variables);
-        fileCreator.writeContents(webInfDirectory, "beans.xml", webXMLContents);
+        String beansXMLContents = thymeleafEngine.processFile("beans.xml", alternatives, variables);
+        fileCreator.writeContents(webInfDirectory, "beans.xml", beansXMLContents);
+
+    }
+
+    public void createCDIFilesForJar(JessieModel model) {
+        Set<String> alternatives = model.getParameter(JessieModel.Parameter.ALTERNATIVES);
+        Map<String, String> variables = model.getParameter(JessieModel.Parameter.VARIABLES);
+
+        String metaInfDirectory = model.getDirectory() + "/" + MavenCreator.SRC_MAIN_RESOURCES + "/META-INF";
+        directoryCreator.createDirectory(metaInfDirectory);
+
+        String beansXMLContents = thymeleafEngine.processFile("beans.xml", alternatives, variables);
+        fileCreator.writeContents(metaInfDirectory, "beans.xml", beansXMLContents);
 
     }
 

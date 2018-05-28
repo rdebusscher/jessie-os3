@@ -42,19 +42,28 @@
         <ui:define name="content">
             <h:panelGrid columns="2">
                 <p:outputLabel value="groupId" for="groupId"/>
-                <p:inputText id="groupId" value="#{jessieDataBean.mavenData.groupId}"/>
+                <p:inputText id="groupId" value="#{jessieDataBean.mavenData.groupId}" required="true"/>
 
-                <p:outputLabel value="artifacId" for="artifactId"/>
-                <p:inputText id="artifactId" value="#{jessieDataBean.mavenData.artifactId}"/>
+                <p:outputLabel value="artifactId" for="artifactId"/>
+                <p:inputText id="artifactId" value="#{jessieDataBean.mavenData.artifactId}" required="true"/>
 
-
-                <p:outputLabel value="Java EE Version" for="javaEEVersion"/>
-                <p:selectOneMenu id="javaEEVersion" value="#{jessieDataBean.javaEEVersion}">
+                <p:outputLabel value="Java EE Version" for="javaEEVersion"
+                               rendered="#{jessieDataBean.technologyStackTypeJavaEE}"/>
+                <p:selectOneMenu id="javaEEVersion" value="#{jessieDataBean.javaEEVersion}"
+                                 rendered="#{jessieDataBean.technologyStackTypeJavaEE}">
                     <f:selectItems value="${dataBean.javaEEItems}"/>
                 </p:selectOneMenu>
 
+                <p:outputLabel value="MicroProfile Version" for="mpVersion"
+                               rendered="#{jessieDataBean.technologyStackTypeMP}"/>
+                <p:selectOneMenu id="mpVersion" value="#{jessieDataBean.mpVersion}"
+                                 rendered="#{jessieDataBean.technologyStackTypeMP}">
+                    <f:selectItems value="${dataBean.mpItems}"/>
+                </p:selectOneMenu>
+
                 <p:outputLabel value="Java SE Version" for="javaSEVersion"/>
-                <p:selectOneMenu id="javaSEVersion" value="#{jessieDataBean.javaSEVersion}">
+                <p:selectOneMenu id="javaSEVersion" value="#{jessieDataBean.javaSEVersion}"
+                                 disabled="#{jessieDataBean.technologyStackTypeMP}">
                     <f:selectItems value="${dataBean.javaSEItems}"/>
                 </p:selectOneMenu>
 

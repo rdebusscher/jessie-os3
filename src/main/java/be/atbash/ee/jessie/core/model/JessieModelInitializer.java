@@ -26,9 +26,18 @@ import java.io.IOException;
  */
 @ApplicationScoped
 public class JessieModelInitializer {
+    public void defineTechnologyStack(JessieModel model) {
+        if (model.getSpecification() != null && model.getSpecification().getMicroProfileVersion() != null) {
+            model.setTechnologyStack(TechnologyStack.MP);
+        } else {
+            model.setTechnologyStack(TechnologyStack.JAVA_EE);
+        }
+    }
 
     public void defineDefaults(JessieModel model, boolean localExecution) {
         checkDirectory(model, localExecution);
+
+        defineTemplate(model);
     }
 
     private void checkDirectory(JessieModel model, boolean localExecution) {
@@ -56,4 +65,21 @@ public class JessieModelInitializer {
         return result;
     }
 
+    private void defineTemplate(JessieModel model) {
+        // FIXME use Atbash String Utils
+        if (model.getTemplate() == null) {
+
+            switch (model.getTechnologyStack()) {
+
+                case JAVA_EE:
+                    model.setTemplate("default");
+                    break;
+                case MP:
+                    model.setTemplate("defaultMP");
+                    break;
+                default:
+                    throw new IllegalArgumentException(String.format("TechnologyStack unknown %s", model.getTechnologyStack()));
+            }
+        }
+    }
 }

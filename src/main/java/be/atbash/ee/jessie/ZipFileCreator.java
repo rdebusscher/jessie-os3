@@ -55,4 +55,8 @@ public class ZipFileCreator extends FileCreator {
 
         return baos.toByteArray();
     }
+
+    public void removeFilesFrom(String directoryPath) {
+        archiveContent.entrySet().removeIf(entry -> entry.getKey().startsWith(directoryPath));
+    }
 }

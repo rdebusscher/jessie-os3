@@ -41,7 +41,8 @@ public class TemplateModelValues {
 
         String templateName = model.getTemplate();
 
-        while (!templates.contains(templateName)) {
+        // FIXME Use StringUtils
+        while (templateName != null && !templates.contains(templateName)) {
             templates.add(templateName);
 
             JessieModel templateModel = templateModelLoader.loadTemplateValues(templateName);

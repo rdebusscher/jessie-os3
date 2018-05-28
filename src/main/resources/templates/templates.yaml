@@ -15,6 +15,7 @@
 #
 
 - default.yaml
+- defaultMP.yaml
 - minimal.yaml
 - octopusprime.yaml
 - opinionated.yaml

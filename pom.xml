@@ -23,7 +23,7 @@
 
     <groupId>be.atbash.ee.jessie</groupId>
     <artifactId>jessie-os3</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.2-SNAPSHOT</version>
 
     <packaging>war</packaging>
 
@@ -46,6 +46,12 @@
             <artifactId>javaee-api</artifactId>
             <version>7.0</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>be.atbash.utils</groupId>
+            <artifactId>utils-se</artifactId>
+            <version>0.9.1</version>
         </dependency>
 
         <dependency>
@@ -73,6 +79,7 @@
             <artifactId>maven-model-builder</artifactId>
             <version>3.3.9</version>
         </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>

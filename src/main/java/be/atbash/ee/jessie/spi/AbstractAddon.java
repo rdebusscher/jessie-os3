@@ -48,12 +48,33 @@ public abstract class AbstractAddon implements JessieAddon {
         this.options = options;
     }
 
+    @Override
+    public final void validate(JessieModel model) {
+        validateModel(model);
+    }
+
+    protected void validateModel(JessieModel model) {
+
+    }
+
     protected final String getWebDirectory(JessieModel model) {
         return model.getDirectory() + "/" + MavenCreator.SRC_MAIN_WEBAPP;
     }
 
+    protected final String getResourceDirectory(JessieModel model) {
+        return model.getDirectory() + "/" + MavenCreator.SRC_MAIN_RESOURCES;
+    }
+
     protected final String getJavaApplicationRootPackage(JessieModel model) {
         return MavenCreator.SRC_MAIN_JAVA + "/" + directoryCreator.createPathForGroupAndArtifact(model.getMaven());
+    }
+
+    protected final String getJavaTestApplicationRootPackage(JessieModel model) {
+        return MavenCreator.SRC_TEST_JAVA + "/" + directoryCreator.createPathForGroupAndArtifact(model.getMaven());
+    }
+
+    protected final String getTestResourcesDirectory(JessieModel model) {
+        return model.getDirectory() + "/" + MavenCreator.SRC_TEST_RESOURCES;
     }
 
     protected final void processTemplateFile(String directory, String templateFileName, String fileName, Set<String> alternatives, Map<String, String> variables) {

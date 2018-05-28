@@ -16,6 +16,7 @@
 package be.atbash.ee.jessie.core.artifacts;
 
 import be.atbash.ee.jessie.core.model.JessieModel;
+import be.atbash.ee.jessie.core.model.TechnologyStack;
 import be.atbash.ee.jessie.core.model.ViewType;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -32,13 +33,29 @@ public class JavaCreator extends AbstractCreator {
         Set<String> alternatives = model.getParameter(JessieModel.Parameter.ALTERNATIVES);
         Map<String, String> variables = model.getParameter(JessieModel.Parameter.VARIABLES);
 
-        if (model.getSpecification().getViews().contains(ViewType.JSF)) {
+        if (model.getTechnologyStack() == TechnologyStack.JAVA_EE) {
+            if (model.getSpecification().getViews().contains(ViewType.JSF)) {
+                String rootJava = MavenCreator.SRC_MAIN_JAVA + "/" + directoryCreator.createPathForGroupAndArtifact(model.getMaven());
+                String viewDirectory = model.getDirectory() + "/" + rootJava + "/view";
+                directoryCreator.createDirectory(viewDirectory);
+
+                String javaFile = thymeleafEngine.processFile("HelloBean.java", alternatives, variables);
+                fileCreator.writeContents(viewDirectory, "HelloBean.java", javaFile);
+
+            }
+        }
+
+        if (model.getTechnologyStack() == TechnologyStack.MP) {
             String rootJava = MavenCreator.SRC_MAIN_JAVA + "/" + directoryCreator.createPathForGroupAndArtifact(model.getMaven());
-            String viewDirectory = model.getDirectory() + "/" + rootJava + "/view";
+            String viewDirectory = model.getDirectory() + "/" + rootJava;
             directoryCreator.createDirectory(viewDirectory);
 
-            String javaFile = thymeleafEngine.processFile("HelloBean.java", alternatives, variables);
-            fileCreator.writeContents(viewDirectory, "HelloBean.java", javaFile);
+            String artifactId = variables.get("artifact");
+            String javaFile = thymeleafEngine.processFile("RestApplication.java", alternatives, variables);
+            fileCreator.writeContents(viewDirectory, artifactId + "RestApplication.java", javaFile);
+
+            javaFile = thymeleafEngine.processFile("HelloController.java", alternatives, variables);
+            fileCreator.writeContents(viewDirectory, "HelloController.java", javaFile);
 
         }
     }

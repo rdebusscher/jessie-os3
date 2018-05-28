@@ -43,18 +43,28 @@
         <ui:define name="content">
             <ui:include src="WEB-INF/artifactInfo.xhtml"/>
             <h3>Project Options</h3>
-            Only JSF application supported for the moment<br/>
-            <h:panelGrid columns="2">
-                <p:outputLabel value="Deltaspike" for="deltaspike"/>
-                <p:selectBooleanCheckbox id="deltaspike" value="#{jessieDataBean.deltaspikeFeature}"/>
+            <h:panelGroup rendered="#{jessieDataBean.technologyStackTypeJavaEE}">
+                Only JSF application supported for the moment<br/>
+                <h:panelGrid columns="2">
+                    <p:outputLabel value="Deltaspike" for="deltaspike"/>
+                    <p:selectBooleanCheckbox id="deltaspike" value="#{jessieDataBean.deltaspikeFeature}"/>
 
-                <p:outputLabel value="PrimeFaces" for="primefaces"/>
-                <p:selectBooleanCheckbox id="primefaces" value="#{jessieDataBean.primefacesFeature}"/>
+                    <p:outputLabel value="PrimeFaces" for="primefaces"/>
+                    <p:selectBooleanCheckbox id="primefaces" value="#{jessieDataBean.primefacesFeature}"/>
 
-                <p:outputLabel value="Octopus" for="octopus"/>
-                <p:selectBooleanCheckbox id="octopus" value="#{jessieDataBean.octopusFeature}"/>
-            </h:panelGrid>
-
+                    <p:outputLabel value="Octopus" for="octopus"/>
+                    <p:selectBooleanCheckbox id="octopus" value="#{jessieDataBean.octopusFeature}"/>
+                </h:panelGrid>
+            </h:panelGroup>
+            <h:panelGroup rendered="#{jessieDataBean.technologyStackTypeMP}">
+                <h:panelGrid columns="2">
+                    <p:outputLabel value="MicroProfile Server" for="supportedServer"/>
+                    <p:selectOneMenu id="supportedServer" value="#{jessieDataBean.supportedServer}" required="true">
+                        <f:selectItem/>
+                        <f:selectItems value="${dataBean.supportedServerItems}"/>
+                    </p:selectOneMenu>
+                </h:panelGrid>
+            </h:panelGroup>
             <p:commandButton value="Overview" ajax="false" icon="fa fa-file-text-o"
                              action="build.xhtml" actionListener="#{jessieDataBean.validateMainValues}"/>
 

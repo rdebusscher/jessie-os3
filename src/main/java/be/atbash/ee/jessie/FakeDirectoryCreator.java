@@ -18,11 +18,21 @@ package be.atbash.ee.jessie;
 import be.atbash.ee.jessie.core.artifacts.DirectoryCreator;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 @ApplicationScoped
 public class FakeDirectoryCreator extends DirectoryCreator {
+
+    @Inject
+    private ZipFileCreator zipFileCreator;
+
     @Override
     public void createDirectory(String directoryPath) {
+        // Nothing to do
+    }
 
+    @Override
+    public void removeDirectory(String directoryPath) {
+        zipFileCreator.removeFilesFrom(directoryPath);
     }
 }

@@ -42,4 +42,6 @@ public interface JessieAddon extends JessieAlternativesProvider, JessieMavenAdap
     Map<String, String> getConditionalConfiguration(JessieModel jessieModel, List<JessieAddon> addons);
 
     void createFiles(JessieModel model);
+
+    void validate(JessieModel model);
 }

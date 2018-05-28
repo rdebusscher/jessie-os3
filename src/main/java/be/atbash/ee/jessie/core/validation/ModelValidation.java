@@ -18,6 +18,7 @@ package be.atbash.ee.jessie.core.validation;
 import be.atbash.ee.jessie.core.exception.JessieConfigurationException;
 import be.atbash.ee.jessie.core.model.JessieModel;
 import be.atbash.ee.jessie.core.templates.TemplateModelLoader;
+import be.atbash.ee.jessie.spi.JessieAddon;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -25,6 +26,7 @@ import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -60,5 +62,12 @@ public class ModelValidation {
             throw new JessieConfigurationException(message);
         }
         // TODO More validations
+    }
+
+    public void validateByAddons(JessieModel model) {
+        List<JessieAddon> addons = model.getParameter(JessieModel.Parameter.ADDONS);
+        for (JessieAddon addon : addons) {
+            addon.validate(model);
+        }
     }
 }

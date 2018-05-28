@@ -16,6 +16,7 @@
 package be.atbash.ee.jessie.core;
 
 import be.atbash.ee.jessie.core.model.JessieModel;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.HashMap;
@@ -31,6 +32,10 @@ public class TemplateVariableProvider {
         Map<String, String> result = new HashMap<>();
 
         result.put("java_package", model.getMaven().getGroupId() + '.' + model.getMaven().getArtifactId());
+        result.put("maven_artifactid", model.getMaven().getArtifactId());
+
+        String artifactId = model.getMaven().getArtifactId();
+        result.put("artifact", StringUtils.capitalize(artifactId));
 
         return result;
 

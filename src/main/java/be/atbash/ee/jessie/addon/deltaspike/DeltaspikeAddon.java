@@ -70,7 +70,7 @@ public class DeltaspikeAddon extends AbstractAddon {
     }
 
     @Override
-    public Set<String> alternativesNames() {
+    public Set<String> alternativesNames(JessieModel model) {
         return Collections.EMPTY_SET;
     }
 

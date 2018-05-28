@@ -39,7 +39,7 @@ public class OpinionatedAddon extends AbstractAddon {
     @PostConstruct
     public void init() {
         defaultOptions = new HashMap<>();
-        defaultOptions.put("octopus.version", "0.9.7-SNAPSHOT");
+        defaultOptions.put("octopus.version", "0.9.7.2");
     }
 
     @Override
@@ -63,7 +63,7 @@ public class OpinionatedAddon extends AbstractAddon {
     }
 
     @Override
-    public Set<String> alternativesNames() {
+    public Set<String> alternativesNames(JessieModel model) {
         Set<String> alternatives = new HashSet<>();
         alternatives.add("primefaces");
         alternatives.add("octopus");

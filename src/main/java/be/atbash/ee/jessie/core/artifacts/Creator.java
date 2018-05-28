@@ -16,6 +16,7 @@
 package be.atbash.ee.jessie.core.artifacts;
 
 import be.atbash.ee.jessie.core.model.JessieModel;
+import be.atbash.ee.jessie.core.model.TechnologyStack;
 import be.atbash.ee.jessie.spi.JessieAddon;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -44,8 +45,10 @@ public class Creator {
 
         mavenCreator.createMavenFiles(model);
 
-        jsfCreator.createJSFFiles(model);
-        cdiCreator.createCDIFiles(model);
+        if (model.getTechnologyStack() == TechnologyStack.JAVA_EE) {
+            jsfCreator.createJSFFiles(model);
+        }
+        cdiCreator.createCDIFilesForWeb(model);
 
         javaCreator.createJavaFiles(model);
 

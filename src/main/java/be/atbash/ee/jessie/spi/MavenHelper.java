@@ -15,10 +15,17 @@
  */
 package be.atbash.ee.jessie.spi;
 
+import be.atbash.util.exception.AtbashUnexpectedException;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  *
@@ -31,6 +38,10 @@ public class MavenHelper {
     }
 
     public void addDependency(Model pomFile, String groupId, String artifactId, String version, String scope) {
+        addDependency(pomFile, groupId, artifactId, version, scope, null);
+    }
+
+    public void addDependency(Model pomFile, String groupId, String artifactId, String version, String scope, String type) {
         Dependency dependency = new Dependency();
         dependency.setGroupId(groupId);
         dependency.setArtifactId(artifactId);
@@ -39,8 +50,35 @@ public class MavenHelper {
 
             dependency.setScope(scope);
         }
+        if (type != null) {
+            dependency.setType(type);
+        }
         pomFile.addDependency(dependency);
 
+    }
+
+    public Model readModel(String pathToPom) {
+        InputStream stream = MavenHelper.class.getResourceAsStream(pathToPom);
+
+        Model model;
+        BufferedReader in = null;
+        try {
+            in = new BufferedReader(new InputStreamReader(stream));
+            MavenXpp3Reader reader = new MavenXpp3Reader();
+            model = reader.read(in);
+            in.close();
+        } catch (IOException | XmlPullParserException e) {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e1) {
+
+                }
+            }
+            throw new AtbashUnexpectedException(e);
+        }
+
+        return model;
     }
 
 }

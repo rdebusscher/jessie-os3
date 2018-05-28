@@ -47,8 +47,13 @@ public class JessieDataBean implements Serializable {
 
     private String activeScreen;
     private JessieMaven mavenData;
+    private String technologyStack;
     private String javaEEVersion;
     private String javaSEVersion;
+    private String mpVersion = "1.2"; // TODO In the future we will support more versions.
+    private String supportedServer;
+
+    private TechnologyStack technologyStackType;
 
     private boolean deltaspikeFeature;
     private boolean primefacesFeature;
@@ -84,12 +89,16 @@ public class JessieDataBean implements Serializable {
             addErrorMessage(facesContext, "artifactId is required");
         }
 
-        if (javaEEVersion == null || javaEEVersion.trim().isEmpty()) {
+        if (technologyStackType == TechnologyStack.JAVA_EE && (javaEEVersion == null || javaEEVersion.trim().isEmpty())) {
             addErrorMessage(facesContext, "Java EE version is required");
         }
 
         if (javaSEVersion == null || javaSEVersion.trim().isEmpty()) {
             addErrorMessage(facesContext, "Java SE version is required");
+        }
+
+        if (technologyStackType == TechnologyStack.MP && "options".equals(activeScreen) && supportedServer.trim().isEmpty()) {
+            addErrorMessage(facesContext, "Supported server selection is required");
         }
     }
 
@@ -107,27 +116,38 @@ public class JessieDataBean implements Serializable {
         model.setMaven(mavenModel);
 
         JessieSpecification specifications = new JessieSpecification();
-        specifications.setJavaEEVersion(JavaEEVersion.valueFor(javaEEVersion));
-        specifications.setJavaSEVersion(JavaSEVersion.valueFor(javaSEVersion));
-        specifications.setModuleStructure(ModuleStructure.SINGLE);
 
-        List<ViewType> views = new ArrayList<>();
-        views.add(ViewType.JSF);
+        if (technologyStackType == TechnologyStack.JAVA_EE) {
+            specifications.setJavaEEVersion(JavaEEVersion.valueFor(javaEEVersion));
+            specifications.setJavaSEVersion(JavaSEVersion.valueFor(javaSEVersion));
+            specifications.setModuleStructure(ModuleStructure.SINGLE);
 
-        specifications.setViews(views);
+            List<ViewType> views = new ArrayList<>();
+            views.add(ViewType.JSF);
+
+            specifications.setViews(views);
+
+            List<String> addons = new ArrayList<>();
+            if (deltaspikeFeature) {
+                addons.add("deltaspike");
+            }
+            if (primefacesFeature) {
+                addons.add("primefaces");
+            }
+            if (octopusFeature) {
+                addons.add("octopus");
+            }
+            model.setAddons(addons);
+        } else {
+            specifications.setJavaSEVersion(JavaSEVersion.valueFor(javaSEVersion));
+            specifications.setModuleStructure(ModuleStructure.SINGLE);
+
+            specifications.setMicroProfileVersion(MicroProfileVersion.MP12);
+
+            model.getOptions().put("mp.server", supportedServer);
+        }
+
         model.setSpecification(specifications);
-
-        List<String> addons = new ArrayList<>();
-        if (deltaspikeFeature) {
-            addons.add("deltaspike");
-        }
-        if (primefacesFeature) {
-            addons.add("primefaces");
-        }
-        if (octopusFeature) {
-            addons.add("octopus");
-        }
-        model.setAddons(addons);
 
         modelManager.prepareModel(model, false);
         creator.createArtifacts(model);
@@ -152,7 +172,7 @@ public class JessieDataBean implements Serializable {
             outputStream.write(archive);
             outputStream.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // FIXME
         }
 
         fc.responseComplete(); // Important! Otherwise JSF will attempt to render the response which obviously will fail since it's already written with a file and closed.
@@ -164,6 +184,27 @@ public class JessieDataBean implements Serializable {
 
     public JessieMaven getMavenData() {
         return mavenData;
+    }
+
+    public String getTechnologyStack() {
+        return technologyStack;
+    }
+
+    public void setTechnologyStack(String technologyStack) {
+        this.technologyStack = technologyStack;
+        technologyStackType = TechnologyStack.valueFor(technologyStack);
+        javaSEVersion = null;
+        if (technologyStackType == TechnologyStack.MP) {
+            javaSEVersion = "1.8";
+        }
+    }
+
+    public boolean isTechnologyStackTypeJavaEE() {
+        return technologyStackType == TechnologyStack.JAVA_EE;
+    }
+
+    public boolean isTechnologyStackTypeMP() {
+        return technologyStackType == TechnologyStack.MP;
     }
 
     public String getJavaEEVersion() {
@@ -180,6 +221,22 @@ public class JessieDataBean implements Serializable {
 
     public void setJavaSEVersion(String javaSEVersion) {
         this.javaSEVersion = javaSEVersion;
+    }
+
+    public String getMpVersion() {
+        return mpVersion;
+    }
+
+    public void setMpVersion(String mpVersion) {
+        this.mpVersion = mpVersion;
+    }
+
+    public String getSupportedServer() {
+        return supportedServer;
+    }
+
+    public void setSupportedServer(String supportedServer) {
+        this.supportedServer = supportedServer;
     }
 
     public boolean isDeltaspikeFeature() {

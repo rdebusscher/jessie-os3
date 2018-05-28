@@ -57,6 +57,7 @@ public class ModelManager {
      * @param localExecution Is the generation run on local machine and thus need real directories.
      */
     public void prepareModel(JessieModel model, boolean localExecution) {
+        modelInitializer.defineTechnologyStack(model);
         modelInitializer.defineDefaults(model, localExecution);
 
         modelValidation.validate(model);
@@ -65,6 +66,8 @@ public class ModelManager {
 
         List<JessieAddon> allAddons = determineAddons(model);
         model.addParameter(JessieModel.Parameter.ADDONS, allAddons);
+
+        modelValidation.validateByAddons(model);
 
         Set<String> alternatives = determineAlternatives(model, allAddons);
         model.addParameter(JessieModel.Parameter.ALTERNATIVES, alternatives);
@@ -77,12 +80,12 @@ public class ModelManager {
         Set<String> alternatives = alternativesProvider.determineAlternatives(model);
 
         for (JessieAddon addon : allAddons) {
-            alternatives.addAll(addon.alternativesNames());
+            alternatives.addAll(addon.alternativesNames(model));
         }
 
         List<JessieAlternativesProvider> alternativeProviders = addonManager.getAlternativeProviders();
         for (JessieAlternativesProvider alternativeProvider : alternativeProviders) {
-            alternatives.addAll(alternativeProvider.alternativesNames());
+            alternatives.addAll(alternativeProvider.alternativesNames(model));
         }
         return alternatives;
     }

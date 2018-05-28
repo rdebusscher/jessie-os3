@@ -62,7 +62,7 @@ public class PrimeFacesAddon extends AbstractAddon {
     }
 
     @Override
-    public Set<String> alternativesNames() {
+    public Set<String> alternativesNames(JessieModel model) {
         Set<String> result = new HashSet<>();
         result.add("primefaces");
         return result;

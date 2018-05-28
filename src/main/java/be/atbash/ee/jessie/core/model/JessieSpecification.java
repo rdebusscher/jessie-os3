@@ -15,10 +15,7 @@
  */
 package be.atbash.ee.jessie.core.model;
 
-import be.atbash.ee.jessie.core.model.deserializer.JavaEEVersionDeserializer;
-import be.atbash.ee.jessie.core.model.deserializer.JavaSEVersionDeserializer;
-import be.atbash.ee.jessie.core.model.deserializer.ModuleDeserializer;
-import be.atbash.ee.jessie.core.model.deserializer.ViewTypeDeserializer;
+import be.atbash.ee.jessie.core.model.deserializer.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -32,6 +29,10 @@ public class JessieSpecification {
     @JsonProperty(value = "javaEE")
     @JsonDeserialize(using = JavaEEVersionDeserializer.class)
     private JavaEEVersion javaEEVersion;
+
+    @JsonProperty(value = "MP")
+    @JsonDeserialize(using = MicroProfileVersionDeserializer.class)
+    private MicroProfileVersion microProfileVersion;
 
     @JsonProperty(value = "javaSE")
     @JsonDeserialize(using = JavaSEVersionDeserializer.class)
@@ -50,6 +51,14 @@ public class JessieSpecification {
 
     public void setJavaEEVersion(JavaEEVersion javaEEVersion) {
         this.javaEEVersion = javaEEVersion;
+    }
+
+    public MicroProfileVersion getMicroProfileVersion() {
+        return microProfileVersion;
+    }
+
+    public void setMicroProfileVersion(MicroProfileVersion microProfileVersion) {
+        this.microProfileVersion = microProfileVersion;
     }
 
     public JavaSEVersion getJavaSEVersion() {

@@ -15,6 +15,8 @@
  */
 package be.atbash.ee.jessie.spi;
 
+import be.atbash.ee.jessie.core.model.JessieModel;
+
 import java.util.Set;
 
 /**
@@ -28,5 +30,5 @@ public interface JessieAlternativesProvider {
      *
      * @return
      */
-    Set<String> alternativesNames();
+    Set<String> alternativesNames(JessieModel model);
 }

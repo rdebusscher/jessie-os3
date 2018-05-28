@@ -75,7 +75,7 @@ public class OctopusAddon extends AbstractAddon {
     }
 
     @Override
-    public Set<String> alternativesNames() {
+    public Set<String> alternativesNames(JessieModel model) {
         Set<String> alternatives = new HashSet<>();
         alternatives.add("octopus");
         return alternatives;

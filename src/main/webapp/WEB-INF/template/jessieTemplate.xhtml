@@ -28,7 +28,7 @@
 
 <h:head>
     <title>Jessie</title>
-    <h:outputStylesheet library="css" name="jessie.css"/>
+    <h:outputStylesheet library="css" name="jessie-0.2.css"/>
 </h:head>
 
 <h:body>
@@ -38,7 +38,9 @@
             <div class="aside">
 
                 <p:menu style="width: 100%;">
-                    <p:menuitem value="Basic" action="main.xhtml" ajax="false"
+                    <p:menuitem value="Technology stack" action="techStack.xhtml" ajax="false"
+                                styleClass="#{jessieDataBean.selectedMenuItemStyleClass('techStack')}"/>
+                    <p:menuitem value="Basics" action="main.xhtml" ajax="false"
                                 styleClass="#{jessieDataBean.selectedMenuItemStyleClass('main')}"/>
                     <p:menuitem value="Options" action="options.xhtml" ajax="false"
                                 styleClass="#{jessieDataBean.selectedMenuItemStyleClass('options')}"/>
@@ -49,8 +51,8 @@
             </div>
             <div class="mainArea">
                 <div class="header">
-                    <div style="float: right;color: orange;">Atbash and MicroProfile support is coming!</div>
                     <h1>Jessie - Java EE Start</h1>
+                    <h2>with support for MicroProfile</h2>
                     <h3><ui:insert name="header"/></h3>
                 </div>
                 <div class="content">
@@ -58,9 +60,7 @@
                     <ui:insert name="content"/>
                 </div>
 
-                <div class="footer">Brought to you by <a href="https://www.atbash.be">Atbash</a>
-                <div style="float: right">v0.1 (22/03/2018)</div>
-                </div>
+                <div class="footer">Brought to you by <a href="https://www.atbash.be">Atbash</a></div>
             </div>
         </div>
     </h:form>

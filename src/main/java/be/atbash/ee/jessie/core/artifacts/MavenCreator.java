@@ -19,6 +19,7 @@ import be.atbash.ee.jessie.core.addon.AddonManager;
 import be.atbash.ee.jessie.core.exception.TechnicalException;
 import be.atbash.ee.jessie.core.model.JavaSEVersion;
 import be.atbash.ee.jessie.core.model.JessieModel;
+import be.atbash.ee.jessie.core.model.TechnologyStack;
 import be.atbash.ee.jessie.spi.JessieAddon;
 import be.atbash.ee.jessie.spi.JessieMavenAdapter;
 import be.atbash.ee.jessie.spi.MavenHelper;
@@ -39,7 +40,11 @@ import java.util.List;
 public class MavenCreator {
 
     public static final String SRC_MAIN_JAVA = "src/main/java";
+    public static final String SRC_MAIN_RESOURCES = "src/main/resources";
     public static final String SRC_MAIN_WEBAPP = "src/main/webapp";
+
+    public static final String SRC_TEST_JAVA = "src/test/java";
+    public static final String SRC_TEST_RESOURCES = "src/test/resources";
 
     @Inject
     private DirectoryCreator directoryCreator;
@@ -127,15 +132,39 @@ public class MavenCreator {
 
         pomFile.setPackaging("war");
 
-        addJavaEEDependency(pomFile, model);
+        addDependencies(pomFile, model);
 
         addJavaSEVersionProperties(pomFile, model);
+
+        if (model.getTechnologyStack() == TechnologyStack.MP) {
+            pomFile.addProperty("failOnMissingWebXml", "false");
+        }
 
         Build build = new Build();
         build.setFinalName(model.getMaven().getArtifactId());
         pomFile.setBuild(build);
 
         return pomFile;
+    }
+
+    private void addDependencies(Model pomFile, JessieModel model) {
+        switch (model.getTechnologyStack()) {
+
+            case JAVA_EE:
+                addJavaEEDependency(pomFile, model);
+                break;
+            case MP:
+                addJavaMPDependencies(pomFile, model);
+                break;
+            default:
+                throw new IllegalArgumentException(String.format("TechnologyStack unknown %s", model.getTechnologyStack()));
+        }
+
+    }
+
+    private void addJavaMPDependencies(Model pomFile, JessieModel model) {
+        mavenHelper.addDependency(pomFile, "org.eclipse.microprofile", "microprofile", "1.2", "provided", "pom");
+
     }
 
     private void addJavaEEDependency(Model pomFile, JessieModel model) {

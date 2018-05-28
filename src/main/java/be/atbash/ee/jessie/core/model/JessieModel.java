@@ -27,8 +27,6 @@ import java.util.*;
  */
 public class JessieModel {
 
-    public static final String DEFAULT_TEMPLATE_NAME = "default";
-
     private String directory;
     @NotNull
     @Valid
@@ -36,10 +34,13 @@ public class JessieModel {
 
     private JessieSpecification specification;
 
-    private String template = DEFAULT_TEMPLATE_NAME;
+    private String template;
 
     private List<String> addons = new ArrayList<>();
     private Map<String, String> options = new HashMap<>();
+
+    @JsonIgnore
+    private TechnologyStack technologyStack;
 
     @JsonIgnore
     private Map<String, Object> parameters = new HashMap<>();
@@ -92,6 +93,14 @@ public class JessieModel {
 
     public Map<String, String> getOptions() {
         return options;
+    }
+
+    public TechnologyStack getTechnologyStack() {
+        return technologyStack;
+    }
+
+    public void setTechnologyStack(TechnologyStack technologyStack) {
+        this.technologyStack = technologyStack;
     }
 
     public void addParameter(Parameter parameter, Object value) {

@@ -15,10 +15,12 @@
  */
 package be.atbash.ee.jessie.core.exception;
 
+import be.atbash.util.exception.AtbashException;
+
 /**
  *
  */
-public class JessieException extends RuntimeException {
+public class JessieException extends AtbashException {
 
     public JessieException(String message) {
         super(message);

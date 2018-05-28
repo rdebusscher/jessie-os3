@@ -17,6 +17,8 @@ package be.atbash.ee.jessie;
 
 import be.atbash.ee.jessie.core.model.JavaEEVersion;
 import be.atbash.ee.jessie.core.model.JavaSEVersion;
+import be.atbash.ee.jessie.core.model.SupportedServer;
+import be.atbash.ee.jessie.core.model.TechnologyStack;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -29,13 +31,36 @@ import java.util.List;
 @Named
 public class DataBean {
 
+    private List<SelectItem> techStackItems;
     private List<SelectItem> javaEEItems;
     private List<SelectItem> javaSEItems;
+    private List<SelectItem> mpItems;
+    private List<SelectItem> supportedServerItems;
 
     @PostConstruct
     public void init() {
+        defineTechStackItems();
         defineJavaEEItems();
         defineJavaSEItems();
+        defineSupportedServerItems();
+
+        mpItems = new ArrayList<>();
+        mpItems.add(new SelectItem("1.2", "1.2")); // TODO In the future we will support more versions.
+    }
+
+    private void defineSupportedServerItems() {
+        supportedServerItems = new ArrayList<>();
+        for (SupportedServer supportedServer : SupportedServer.values()) {
+            supportedServerItems.add(new SelectItem(supportedServer.getName(), supportedServer.getName()));
+        }
+    }
+
+    private void defineTechStackItems() {
+
+        techStackItems = new ArrayList<>();
+        for (TechnologyStack technologyStack : TechnologyStack.values()) {
+            techStackItems.add(new SelectItem(technologyStack.getCode(), technologyStack.getLabel()));
+        }
     }
 
     private void defineJavaEEItems() {
@@ -58,5 +83,17 @@ public class DataBean {
 
     public List<SelectItem> getJavaSEItems() {
         return javaSEItems;
+    }
+
+    public List<SelectItem> getTechStackItems() {
+        return techStackItems;
+    }
+
+    public List<SelectItem> getMpItems() {
+        return mpItems;
+    }
+
+    public List<SelectItem> getSupportedServerItems() {
+        return supportedServerItems;
     }
 }

@@ -27,10 +27,17 @@
     <h3>Data entered</h3>
     groupId : #{jessieDataBean.mavenData.groupId} <br/>
     artifactId : #{jessieDataBean.mavenData.artifactId} <br/>
-    Java EE version : #{jessieDataBean.javaEEVersion} <br/>
+    <h:panelGroup rendered="#{jessieDataBean.technologyStackTypeJavaEE}">
+        Java EE version : #{jessieDataBean.javaEEVersion} <br/>
+    </h:panelGroup>
+    <h:panelGroup rendered="#{jessieDataBean.technologyStackTypeMP}">
+        MicroProfile version : 1.2 <br/>
+    </h:panelGroup>
     Java SE version : #{jessieDataBean.javaSEVersion} <br/>
-    JSF application<br/>
-    <h:panelGroup rendered="#{jessieDataBean.activeScreen == 'build'}">
+    <h:panelGroup rendered="#{jessieDataBean.technologyStackTypeJavaEE}">
+        JSF application<br/>
+    </h:panelGroup>
+    <h:panelGroup rendered="#{jessieDataBean.technologyStackTypeJavaEE and jessieDataBean.activeScreen == 'build'}">
         With the following features <br/>
         <h:panelGroup rendered="#{jessieDataBean.deltaspikeFeature}">
             Deltaspike
@@ -42,6 +49,10 @@
             Octopus
         </h:panelGroup>
         <br/>
+    </h:panelGroup>
+    <h:panelGroup rendered="#{not jessieDataBean.technologyStackTypeJavaEE and jessieDataBean.activeScreen == 'build'}">
+        With the following option <br/>
+        MicroProfile Server : #{jessieDataBean.supportedServer} <br/>
     </h:panelGroup>
     <hr/>
 </ui:composition>
