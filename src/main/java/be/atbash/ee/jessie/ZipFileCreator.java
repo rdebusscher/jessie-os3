@@ -17,17 +17,18 @@ package be.atbash.ee.jessie;
 
 import be.atbash.ee.jessie.core.artifacts.FileCreator;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.SessionScoped;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-@ApplicationScoped
-public class ZipFileCreator extends FileCreator {
+@SessionScoped
+public class ZipFileCreator extends FileCreator implements Serializable {
 
     private Map<String, String> archiveContent = new HashMap<>();
 
@@ -53,6 +54,7 @@ public class ZipFileCreator extends FileCreator {
             ioe.printStackTrace();
         }
 
+        archiveContent.clear();
         return baos.toByteArray();
     }
 
