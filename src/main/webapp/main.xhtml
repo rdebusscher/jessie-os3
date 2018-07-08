@@ -42,10 +42,16 @@
         <ui:define name="content">
             <h:panelGrid columns="2">
                 <p:outputLabel value="groupId" for="groupId"/>
-                <p:inputText id="groupId" value="#{jessieDataBean.mavenData.groupId}" required="true"/>
+                <p:inputText id="groupId" value="#{jessieDataBean.mavenData.groupId}" required="true"
+                             title="Used as part of the package name so it must comply with the Java rules">
+                    <f:validator validatorId="packageNameValidator" />
+                </p:inputText>
 
                 <p:outputLabel value="artifactId" for="artifactId"/>
-                <p:inputText id="artifactId" value="#{jessieDataBean.mavenData.artifactId}" required="true"/>
+                <p:inputText id="artifactId" value="#{jessieDataBean.mavenData.artifactId}" required="true"
+                             title="Used as part of the package name so it must comply with the Java rules">
+                    <f:validator validatorId="packageNameValidator" />
+                </p:inputText>
 
                 <p:outputLabel value="Java EE Version" for="javaEEVersion"
                                rendered="#{jessieDataBean.technologyStackTypeJavaEE}"/>
@@ -57,7 +63,8 @@
                 <p:outputLabel value="MicroProfile Version" for="mpVersion"
                                rendered="#{jessieDataBean.technologyStackTypeMP}"/>
                 <p:selectOneMenu id="mpVersion" value="#{jessieDataBean.mpVersion}"
-                                 rendered="#{jessieDataBean.technologyStackTypeMP}">
+                                 rendered="#{jessieDataBean.technologyStackTypeMP}"
+                                 required="#{jessieDataBean.technologyStackTypeMP}">
                     <f:selectItems value="${dataBean.mpItems}"/>
                 </p:selectOneMenu>
 
@@ -70,6 +77,8 @@
                 <p:commandButton value="Options" ajax="false" icon="fa fa-cog"
                                  action="options.xhtml" actionListener="#{jessieDataBean.validateMainValues}"/>
             </h:panelGrid>
+            <p:tooltip id="groupIdToolTipFocus" for="groupId" showEvent="focus" hideEvent="blur" />
+            <p:tooltip id="artifactIdToolTipFocus" for="artifactId" showEvent="focus" hideEvent="blur" />
         </ui:define>
     </ui:composition>
 </h:body>

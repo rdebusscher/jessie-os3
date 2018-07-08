@@ -163,8 +163,8 @@ public class MavenCreator {
     }
 
     private void addJavaMPDependencies(Model pomFile, JessieModel model) {
-        mavenHelper.addDependency(pomFile, "org.eclipse.microprofile", "microprofile", "1.2", "provided", "pom");
-
+        mavenHelper.addDependency(pomFile, "org.eclipse.microprofile", "microprofile",
+                model.getSpecification().getMicroProfileVersion().getCode(), "provided", "pom");
     }
 
     private void addJavaEEDependency(Model pomFile, JessieModel model) {

@@ -30,10 +30,15 @@ import java.util.zip.ZipOutputStream;
 @SessionScoped
 public class ZipFileCreator extends FileCreator implements Serializable {
 
-    private Map<String, String> archiveContent = new HashMap<>();
+    private Map<String, byte[]> archiveContent = new HashMap<>();
 
     @Override
     public void writeContents(String directory, String fileName, String contents) {
+        archiveContent.put(directory + File.separator + fileName, contents.getBytes());
+    }
+
+    @Override
+    public void writeContents(String directory, String fileName, byte[] contents) {
         archiveContent.put(directory + File.separator + fileName, contents);
     }
 
@@ -41,12 +46,12 @@ public class ZipFileCreator extends FileCreator implements Serializable {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (ZipOutputStream zos = new ZipOutputStream(baos)) {
 
-            for (Map.Entry<String, String> entry : archiveContent.entrySet()) {
+            for (Map.Entry<String, byte[]> entry : archiveContent.entrySet()) {
 
                 ZipEntry zipEntry = new ZipEntry(entry.getKey());
 
                 zos.putNextEntry(zipEntry);
-                zos.write(entry.getValue().getBytes());
+                zos.write(entry.getValue());
                 zos.closeEntry();
 
             }

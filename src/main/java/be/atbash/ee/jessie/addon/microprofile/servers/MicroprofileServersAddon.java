@@ -15,11 +15,13 @@
  */
 package be.atbash.ee.jessie.addon.microprofile.servers;
 
+import be.atbash.ee.jessie.addon.microprofile.servers.model.MicroprofileSpec;
+import be.atbash.ee.jessie.addon.microprofile.servers.model.SupportedServer;
 import be.atbash.ee.jessie.core.artifacts.CDICreator;
 import be.atbash.ee.jessie.core.artifacts.MavenCreator;
 import be.atbash.ee.jessie.core.exception.JessieConfigurationException;
 import be.atbash.ee.jessie.core.model.JessieModel;
-import be.atbash.ee.jessie.core.model.SupportedServer;
+import be.atbash.ee.jessie.core.model.OptionValue;
 import be.atbash.ee.jessie.spi.AbstractAddon;
 import be.atbash.ee.jessie.spi.JessieAddon;
 import be.atbash.ee.jessie.spi.MavenHelper;
@@ -30,6 +32,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -45,6 +48,8 @@ public class MicroprofileServersAddon extends AbstractAddon {
 
     private Model serverPomModel;
 
+    private List<MicroprofileSpec> microprofileSpecs;
+
     @PostConstruct
     public void init() {
         defaultOptions = new HashMap<>();
@@ -53,7 +58,7 @@ public class MicroprofileServersAddon extends AbstractAddon {
 
     @Override
     public String addonName() {
-        return "microprofile-servers";
+        return "mp";
     }
 
     @Override
@@ -62,28 +67,62 @@ public class MicroprofileServersAddon extends AbstractAddon {
     }
 
     protected void validateModel(JessieModel model) {
-        String serverName = model.getOptions().get("mp.server");
+        checkServerValue(model);
+
+        handleSpecOptions(model);
+        // TODO Should we forsee a Map within JessieModel to stores these things?
+        // So that it doesn't need to be be redefined?
+    }
+
+    private void handleSpecOptions(JessieModel model) {
+        OptionValue specs = options.get("specs");
+
+        microprofileSpecs = new ArrayList<>();
+        List<String> invalidSpecs = new ArrayList<>();
+        for (String spec : specs.getValues()) {
+            MicroprofileSpec microprofileSpec = MicroprofileSpec.valueFor(spec);
+            if (microprofileSpec == null) {
+                invalidSpecs.add(spec);
+            } else {
+                model.addVariable("mp_" + microprofileSpec.getCode(), "true");
+                microprofileSpecs.add(microprofileSpec);
+            }
+        }
+
+        if (!invalidSpecs.isEmpty()) {
+            throw new JessieConfigurationException(invalidSpecValue(invalidSpecs));
+        }
+    }
+
+    private void checkServerValue(JessieModel model) {
+        String serverName = options.get("server").getSingleValue();
         SupportedServer supportedServer = SupportedServer.valueFor(serverName);
 
         if (supportedServer == null) {
             throw new JessieConfigurationException(invalidMPServerValue(serverName));
         }
 
-        // TODO Should we forsee a Map within JessieModel to stores these things?
-        // So that it doesn't need to be be redefined?
+        model.addVariable("mp_servername", supportedServer.getName());
     }
 
     private String invalidMPServerValue(String serverName) {
         return "Unknown value for option 'mp.server' : " + serverName;
     }
 
+    private String invalidSpecValue(List<String> invalidSpecs) {
+        return "Unknown value for option 'mp.specs' : " + invalidSpecs.stream()
+                .collect(Collectors.joining(", "));
+    }
+
     @Override
     public void adaptMavenModel(Model pomFile, JessieModel model) {
 
-        String serverName = model.getOptions().get("mp.server");
+        String serverName = options.get("server").getSingleValue();
+        String profileName = serverName + "-" + model.getSpecification().getMicroProfileVersion().getCode();
         for (Profile profile : serverPomModel.getProfiles()) {
-            if (profile.getId().equals(serverName)) {
+            if (profile.getId().equals(profileName)) {
                 pomFile.getProfiles().add(profile);
+                profile.setId(serverName);
             }
         }
 
@@ -93,14 +132,19 @@ public class MicroprofileServersAddon extends AbstractAddon {
             pomFile.setPackaging("jar");
         }
 
-        mavenHelper.addDependency(pomFile, "com.nimbusds", "nimbus-jose-jwt", "5.7", "test");
-        mavenHelper.addDependency(pomFile, "org.glassfish.jersey.core", "jersey-client", "2.25.1", "test");
+        if (microprofileSpecs.contains(MicroprofileSpec.JWT_AUTH)) {
+            mavenHelper.addDependency(pomFile, "com.nimbusds", "nimbus-jose-jwt", "5.7", "test");
+            mavenHelper.addDependency(pomFile, "org.glassfish.jersey.core", "jersey-client", "2.25.1", "test");
+
+            mavenHelper.addDependency(pomFile, "org.bouncycastle", "bcpkix-jdk15on", "1.53", "test");
+
+        }
 
     }
 
     @Override
     public Set<String> alternativesNames(JessieModel model) {
-        String serverName = model.getOptions().get("mp.server");
+        String serverName = options.get("server").getSingleValue();
         SupportedServer supportedServer = SupportedServer.valueFor(serverName);
 
         Set<String> alternatives = new HashSet<>();
@@ -123,9 +167,9 @@ public class MicroprofileServersAddon extends AbstractAddon {
     public void createFiles(JessieModel model) {
 
         Set<String> alternatives = model.getParameter(JessieModel.Parameter.ALTERNATIVES);
-        Map<String, String> variables = model.getParameter(JessieModel.Parameter.VARIABLES);
+        Map<String, String> variables = model.getVariables();
 
-        String serverName = model.getOptions().get("mp.server");
+        String serverName = model.getOptions().get("mp.server").getSingleValue();
         SupportedServer supportedServer = SupportedServer.valueFor(serverName);
 
         if (supportedServer == SupportedServer.LIBERTY) {
@@ -134,6 +178,12 @@ public class MicroprofileServersAddon extends AbstractAddon {
             directoryCreator.createDirectory(resourceDirectory);
 
             processTemplateFile(resourceDirectory, "server.xml", alternatives, variables);
+
+            resourceDirectory = model.getDirectory() + "/src/main/liberty/server/resources/security";
+
+            directoryCreator.createDirectory(resourceDirectory);
+
+            processFile(resourceDirectory, "public.jks", alternatives);
         }
 
         if (supportedServer == SupportedServer.KUMULUZEE) {
@@ -195,31 +245,42 @@ public class MicroprofileServersAddon extends AbstractAddon {
 
         String rootJava = getJavaApplicationRootPackage(model);
 
-        String healthDirectory = model.getDirectory() + "/" + rootJava + "/health";
-        directoryCreator.createDirectory(healthDirectory);
+        if (microprofileSpecs.contains(MicroprofileSpec.HEALTH_CHECKS)) {
+            String healthDirectory = model.getDirectory() + "/" + rootJava + "/health";
+            directoryCreator.createDirectory(healthDirectory);
 
-        processTemplateFile(healthDirectory, "ServiceHealthCheck.java", alternatives, variables);
+            processTemplateFile(healthDirectory, "ServiceHealthCheck.java", alternatives, variables);
+        }
 
-        String configDirectory = model.getDirectory() + "/" + rootJava + "/config";
-        directoryCreator.createDirectory(configDirectory);
+        if (microprofileSpecs.contains(MicroprofileSpec.CONFIG)) {
+            String configDirectory = model.getDirectory() + "/" + rootJava + "/config";
+            directoryCreator.createDirectory(configDirectory);
 
-        processTemplateFile(configDirectory, "ConfigTestController.java", alternatives, variables);
+            processTemplateFile(configDirectory, "ConfigTestController.java", alternatives, variables);
+        }
 
-        String metricDirectory = model.getDirectory() + "/" + rootJava + "/metric";
-        directoryCreator.createDirectory(metricDirectory);
+        if (microprofileSpecs.contains(MicroprofileSpec.HEALTH_METRICS)) {
+            String metricDirectory = model.getDirectory() + "/" + rootJava + "/metric";
+            directoryCreator.createDirectory(metricDirectory);
 
-        processTemplateFile(metricDirectory, "MetricController.java", alternatives, variables);
+            processTemplateFile(metricDirectory, "MetricController.java", alternatives, variables);
+        }
 
-        String faultDirectory = model.getDirectory() + "/" + rootJava + "/fault";
-        directoryCreator.createDirectory(faultDirectory);
+        if (microprofileSpecs.contains(MicroprofileSpec.FAULT_TOLERANCE)) {
+            String faultDirectory = model.getDirectory() + "/" + rootJava + "/resilient";
+            directoryCreator.createDirectory(faultDirectory);
 
-        processTemplateFile(faultDirectory, "FaultToleranceController.java", alternatives, variables);
+            processTemplateFile(faultDirectory, "FaultToleranceController.java", alternatives, variables);
+        }
 
-        String secureDirectory = model.getDirectory() + "/" + rootJava + "/secure";
-        directoryCreator.createDirectory(secureDirectory);
+        if (microprofileSpecs.contains(MicroprofileSpec.JWT_AUTH)) {
+            String secureDirectory = model.getDirectory() + "/" + rootJava + "/secure";
+            directoryCreator.createDirectory(secureDirectory);
 
-        processTemplateFile(secureDirectory, "ProtectedController.java", alternatives, variables);
+            processTemplateFile(secureDirectory, "ProtectedController.java", alternatives, variables);
+        }
 
+        // TODO : Verify : This is for all specs?
         if (supportedServer != SupportedServer.KUMULUZEE) {
             // With kumuluzEE, it properties are integrated within config.yaml
             String metaInfDirectory = getResourceDirectory(model) + "/META-INF";
@@ -234,7 +295,11 @@ public class MicroprofileServersAddon extends AbstractAddon {
         directoryCreator.createDirectory(webDirectory);
         processTemplateFile(webDirectory, "index.html", alternatives, variables);
 
-        addTestClient(model, alternatives, variables);
+        if (microprofileSpecs.contains(MicroprofileSpec.JWT_AUTH)) {
+            addTestClient(model, alternatives, variables);
+        }
+
+        processTemplateFile(model.getDirectory(), "readme.md", alternatives, variables);
     }
 
     private void addTestClient(JessieModel model, Set<String> alternatives, Map<String, String> variables) {

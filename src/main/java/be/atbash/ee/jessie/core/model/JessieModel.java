@@ -15,7 +15,9 @@
  */
 package be.atbash.ee.jessie.core.model;
 
+import be.atbash.ee.jessie.core.model.deserializer.OptionsDeserializer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -37,7 +39,9 @@ public class JessieModel {
     private String template;
 
     private List<String> addons = new ArrayList<>();
-    private Map<String, String> options = new HashMap<>();
+
+    @JsonDeserialize(using = OptionsDeserializer.class)
+    private Map<String, OptionValue> options = new HashMap<>();
 
     @JsonIgnore
     private TechnologyStack technologyStack;
@@ -47,6 +51,9 @@ public class JessieModel {
 
     @JsonIgnore
     private Set<String> alternatives;  // FIXME Why was this needed?
+
+    @JsonIgnore
+    private Map<String, String> variables = new HashMap<>();
 
     public String getDirectory() {
         return directory;
@@ -91,7 +98,7 @@ public class JessieModel {
         this.addons = addons;
     }
 
-    public Map<String, String> getOptions() {
+    public Map<String, OptionValue> getOptions() {
         return options;
     }
 
@@ -103,6 +110,18 @@ public class JessieModel {
         this.technologyStack = technologyStack;
     }
 
+    public void addVariable(String name, String value) {
+        variables.put(name, value);
+    }
+
+    public void addVariables(Map<String, String> variables) {
+        variables.forEach(this::addVariable);
+    }
+
+    public Map<String, String> getVariables() {
+        return variables;
+    }
+
     public void addParameter(Parameter parameter, Object value) {
         parameters.put(parameter.name(), value);
     }
@@ -112,7 +131,7 @@ public class JessieModel {
     }
 
     public enum Parameter {
-        FILENAME, ALTERNATIVES, ADDONS, VARIABLES
+        FILENAME, ALTERNATIVES, ADDONS
     }
 
 }

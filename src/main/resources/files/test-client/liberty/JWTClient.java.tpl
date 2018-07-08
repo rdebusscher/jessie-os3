@@ -32,7 +32,7 @@ public class JWTClient {
 
         System.out.println(jwt);
 
-        WebTarget target = ClientBuilder.newClient().target("http://localhost:8080/data/protected");
+        WebTarget target = ClientBuilder.newClient().target("http://localhost:8181/[# th:text="${maven_artifactid}"/]/data/protected");
         Response response = target.request().header("authorization", "Bearer " + jwt).buildGet().invoke();
 
         System.out.println(response.getStatus());

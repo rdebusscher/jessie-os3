@@ -57,7 +57,7 @@ public class OctopusAddon extends AbstractAddon {
 
     @Override
     public void adaptMavenModel(Model pomFile, JessieModel model) {
-        String version = options.get("version");
+        String version = options.get("version").getSingleValue();
 
         String artifactId = null;
         if (model.getSpecification().getViews().contains(ViewType.JSF)) {
@@ -95,7 +95,7 @@ public class OctopusAddon extends AbstractAddon {
     @Override
     public void createFiles(JessieModel model) {
         Set<String> alternatives = model.getParameter(JessieModel.Parameter.ALTERNATIVES);
-        Map<String, String> variables = model.getParameter(JessieModel.Parameter.VARIABLES);
+        Map<String, String> variables = model.getVariables();
 
         String webDirectory = getWebDirectory(model);
         String webInfDirectory = model.getDirectory() + "/" + MavenCreator.SRC_MAIN_WEBAPP + "/WEB-INF";

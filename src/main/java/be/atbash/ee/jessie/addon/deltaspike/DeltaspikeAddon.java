@@ -55,12 +55,12 @@ public class DeltaspikeAddon extends AbstractAddon {
     @Override
     public void adaptMavenModel(Model pomFile, JessieModel model) {
 
-        String version = options.get("version");
+        String version = options.get("version").getSingleValue();
 
         mavenHelper.addDependency(pomFile, "org.apache.deltaspike.core", "deltaspike-core-api", version);
         mavenHelper.addDependency(pomFile, "org.apache.deltaspike.core", "deltaspike-core-impl", version, "runtime");
 
-        String modules = options.get("modules");
+        String modules = options.get("modules").getSingleValue();
         if (modules != null && !modules.isEmpty()) {
             for (String module : modules.split(",")) {
                 mavenHelper.addDependency(pomFile, "org.apache.deltaspike.modules", "deltaspike-" + module.trim() + "-module-api", version);

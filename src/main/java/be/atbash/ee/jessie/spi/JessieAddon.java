@@ -16,6 +16,7 @@
 package be.atbash.ee.jessie.spi;
 
 import be.atbash.ee.jessie.core.model.JessieModel;
+import be.atbash.ee.jessie.core.model.OptionValue;
 
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,7 @@ public interface JessieAddon extends JessieAlternativesProvider, JessieMavenAdap
 
     int priority();  // Whe can't use @Priority as the annotation is lost when CDI proxies are created.
 
-    void addonOptions(Map<String, String> options);
+    void addonOptions(Map<String, OptionValue> options);
 
     /**
      * Return the addons on which this addon is dependent. But not Conditionally, always. For the conditional list, see getConditionalConfiguration

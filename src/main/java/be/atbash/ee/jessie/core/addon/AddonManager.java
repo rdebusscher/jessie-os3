@@ -44,10 +44,9 @@ public class AddonManager {
     public List<JessieAddon> getAddons(String addonName) {
         List<JessieAddon> result = new ArrayList<>();
 
-        Iterator<JessieAddon> addonIterator = addons.iterator();
-        while (addonIterator.hasNext()) {
-            JessieAddon addon = addonIterator.next();
+        for (JessieAddon addon : addons) {
             if (addonName.equalsIgnoreCase(addon.addonName())) {
+                // There are not that many addons that a break (or convertion to while) improves performance.
                 result.add(addon);
             }
         }
@@ -68,7 +67,7 @@ public class AddonManager {
     }
 
     private <T> List<T> getProviders(Iterator<T> alternativesIterator) {
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
         while (alternativesIterator.hasNext()) {
             T provider = alternativesIterator.next();
 

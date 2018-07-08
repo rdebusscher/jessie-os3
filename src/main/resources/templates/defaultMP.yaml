@@ -17,4 +17,4 @@
 specification:
    javaSE : 1.8
    structure : single
-addons : [microprofile-servers]
+addons : [mp]

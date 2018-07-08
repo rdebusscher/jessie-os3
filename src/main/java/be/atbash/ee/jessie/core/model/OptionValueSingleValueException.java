@@ -13,22 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package be.atbash.ee.jessie.core.artifacts;
+package be.atbash.ee.jessie.core.model;
 
-import be.atbash.ee.jessie.core.model.JessieMaven;
+import be.atbash.ee.jessie.core.exception.JessieException;
 
-/**
- *
- */
-
-public abstract class DirectoryCreator {
-
-    public abstract void createDirectory(String directoryPath);
-
-    public abstract void removeDirectory(String directoryPath);
-
-    public String createPathForGroupAndArtifact(JessieMaven mavenModel) {
-        return (mavenModel.getGroupId() + '.' + mavenModel.getArtifactId()).replaceAll("\\.", "/");
+public class OptionValueSingleValueException extends JessieException {
+    public OptionValueSingleValueException(String message) {
+        super(message);
     }
-
 }

@@ -44,8 +44,6 @@ public class ThymeleafEngine {
         engine = new TemplateEngine();
         engine.setTemplateResolver(resolver);
 
-        filesLocator.init();
-
     }
 
     public String processFile(String file, Set<String> alternatives, Map<String, String> variables) {

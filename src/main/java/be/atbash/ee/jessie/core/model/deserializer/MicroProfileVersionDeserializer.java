@@ -31,7 +31,7 @@ public class MicroProfileVersionDeserializer extends JsonDeserializer<MicroProfi
         String propertyValue = jsonParser.getText();
         MicroProfileVersion result = MicroProfileVersion.valueFor(propertyValue);
         if (result == null) {
-            throw new PropertyValueNotSupportedException("javaEE", propertyValue);
+            throw new PropertyValueNotSupportedException("mp", propertyValue);
         }
         return result;
     }

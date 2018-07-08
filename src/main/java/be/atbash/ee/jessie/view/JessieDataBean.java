@@ -16,6 +16,8 @@
 package be.atbash.ee.jessie.view;
 
 import be.atbash.ee.jessie.ZipFileCreator;
+import be.atbash.ee.jessie.addon.microprofile.servers.model.MicroprofileSpec;
+import be.atbash.ee.jessie.addon.microprofile.servers.model.SupportedServer;
 import be.atbash.ee.jessie.core.artifacts.Creator;
 import be.atbash.ee.jessie.core.model.*;
 import org.apache.deltaspike.core.api.scope.ViewAccessScoped;
@@ -24,13 +26,15 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @ViewAccessScoped
 @Named
@@ -50,10 +54,15 @@ public class JessieDataBean implements Serializable {
     private String technologyStack;
     private String javaEEVersion;
     private String javaSEVersion;
-    private String mpVersion = "1.2"; // TODO In the future we will support more versions.
+    private String mpVersion;
     private String supportedServer;
 
     private TechnologyStack technologyStackType;
+
+    private List<SelectItem> supportedServerItems;
+    private List<String> selectedSpecs = new ArrayList<>();
+    private List<SelectItem> specs;
+    private String selectedSpecDescription;
 
     private boolean deltaspikeFeature;
     private boolean primefacesFeature;
@@ -71,6 +80,51 @@ public class JessieDataBean implements Serializable {
         if ("build".equals(activeScreen)) {
             validateMainValues();
         }
+        if ("options".equals(activeScreen)) {
+            if (isTechnologyStackTypeMP()) {
+                MicroProfileVersion version = MicroProfileVersion.valueFor(mpVersion);
+
+                defineSupportedServerItems(version);
+                selectedSpecs.clear();
+                defineExampleSpecs(version);
+            }
+        }
+    }
+
+    private void defineExampleSpecs(MicroProfileVersion version) {
+        specs = new ArrayList<>();
+
+        for (MicroprofileSpec microprofileSpec : MicroprofileSpec.values()) {
+            if (microprofileSpec.getMpVersions().contains(version)) {
+                specs.add(new SelectItem(microprofileSpec.getCode(), microprofileSpec.getLabel()));
+                selectedSpecs.add(microprofileSpec.getCode());
+            }
+        }
+    }
+
+    private void defineSupportedServerItems(MicroProfileVersion version) {
+
+        supportedServerItems = new ArrayList<>();
+        for (SupportedServer supportedServer : SupportedServer.values()) {
+            if (supportedServer.getMpVersions().contains(version)) {
+                supportedServerItems.add(new SelectItem(supportedServer.getName(), supportedServer.getName()));
+            }
+        }
+        randomizeSupportedServers();
+    }
+
+    private void randomizeSupportedServers() {
+        Random rnd = new Random();
+        Map<Integer, SelectItem> data = supportedServerItems
+                .stream().collect(Collectors.toMap(s -> rnd.nextInt(500),
+                Function.identity()));
+
+        supportedServerItems = new ArrayList<>(data.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, LinkedHashMap::new))
+                .values());
+
     }
 
     public String selectedMenuItemStyleClass(String menuItem) {
@@ -142,9 +196,10 @@ public class JessieDataBean implements Serializable {
             specifications.setJavaSEVersion(JavaSEVersion.valueFor(javaSEVersion));
             specifications.setModuleStructure(ModuleStructure.SINGLE);
 
-            specifications.setMicroProfileVersion(MicroProfileVersion.MP12);
+            specifications.setMicroProfileVersion(MicroProfileVersion.valueFor(mpVersion));
 
-            model.getOptions().put("mp.server", supportedServer);
+            model.getOptions().put("mp.server", new OptionValue(supportedServer));
+            model.getOptions().put("mp.specs", new OptionValue(selectedSpecs));
         }
 
         model.setSpecification(specifications);
@@ -229,6 +284,31 @@ public class JessieDataBean implements Serializable {
 
     public void setMpVersion(String mpVersion) {
         this.mpVersion = mpVersion;
+    }
+
+    public List<SelectItem> getSupportedServerItems() {
+        return supportedServerItems;
+    }
+
+    public List<SelectItem> getSpecs() {
+        return specs;
+    }
+
+    public List<String> getSelectedSpecs() {
+        return selectedSpecs;
+    }
+
+    public void setSelectedSpecs(List<String> selectedSpecs) {
+        this.selectedSpecs = selectedSpecs;
+
+        selectedSpecDescription = selectedSpecs.stream()
+                .map(s -> MicroprofileSpec.valueFor(s).getLabel())
+                .collect(Collectors.joining(", "));
+
+    }
+
+    public String getSelectedSpecDescription() {
+        return selectedSpecDescription;
     }
 
     public String getSupportedServer() {

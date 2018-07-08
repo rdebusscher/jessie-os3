@@ -15,13 +15,11 @@
  */
 package be.atbash.ee.jessie.core.files;
 
-import be.atbash.ee.jessie.core.config.ConfigurationParameter;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -35,9 +33,6 @@ import java.util.zip.ZipFile;
  */
 @ApplicationScoped
 public class FilesLocator {
-
-    @Inject
-    private ConfigurationParameter configurationParameter;
 
     private List<FileIdentification> fileIdentifications;
     private List<String> fileNames;

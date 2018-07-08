@@ -17,7 +17,7 @@ package be.atbash.ee.jessie;
 
 import be.atbash.ee.jessie.core.model.JavaEEVersion;
 import be.atbash.ee.jessie.core.model.JavaSEVersion;
-import be.atbash.ee.jessie.core.model.SupportedServer;
+import be.atbash.ee.jessie.core.model.MicroProfileVersion;
 import be.atbash.ee.jessie.core.model.TechnologyStack;
 
 import javax.annotation.PostConstruct;
@@ -35,23 +35,20 @@ public class DataBean {
     private List<SelectItem> javaEEItems;
     private List<SelectItem> javaSEItems;
     private List<SelectItem> mpItems;
-    private List<SelectItem> supportedServerItems;
 
     @PostConstruct
     public void init() {
         defineTechStackItems();
         defineJavaEEItems();
         defineJavaSEItems();
-        defineSupportedServerItems();
 
-        mpItems = new ArrayList<>();
-        mpItems.add(new SelectItem("1.2", "1.2")); // TODO In the future we will support more versions.
+        defineMPVersions();
     }
 
-    private void defineSupportedServerItems() {
-        supportedServerItems = new ArrayList<>();
-        for (SupportedServer supportedServer : SupportedServer.values()) {
-            supportedServerItems.add(new SelectItem(supportedServer.getName(), supportedServer.getName()));
+    private void defineMPVersions() {
+        mpItems = new ArrayList<>();
+        for (MicroProfileVersion microProfileVersion : MicroProfileVersion.values()) {
+            mpItems.add(new SelectItem(microProfileVersion.getCode(), microProfileVersion.getLabel()));
         }
     }
 
@@ -93,7 +90,4 @@ public class DataBean {
         return mpItems;
     }
 
-    public List<SelectItem> getSupportedServerItems() {
-        return supportedServerItems;
-    }
 }

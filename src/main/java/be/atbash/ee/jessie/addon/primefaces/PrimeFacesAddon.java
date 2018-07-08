@@ -70,7 +70,7 @@ public class PrimeFacesAddon extends AbstractAddon {
 
     @Override
     public void adaptMavenModel(Model pomFile, JessieModel model) {
-        String version = options.get("version");
+        String version = options.get("version").getSingleValue();
 
         mavenHelper.addDependency(pomFile, "org.primefaces", "primefaces", version);
     }

@@ -13,22 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package be.atbash.ee.jessie.core.artifacts;
+package be.atbash.ee.jessie.core.validation;
 
-import be.atbash.ee.jessie.core.model.JessieMaven;
+import javax.enterprise.context.ApplicationScoped;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-/**
- *
- */
+@ApplicationScoped
+public class PackageNameValidator {
 
-public abstract class DirectoryCreator {
+    private static final String VALID_REGEX = "^(?:\\w+|\\w+\\.\\w+)+$";
 
-    public abstract void createDirectory(String directoryPath);
-
-    public abstract void removeDirectory(String directoryPath);
-
-    public String createPathForGroupAndArtifact(JessieMaven mavenModel) {
-        return (mavenModel.getGroupId() + '.' + mavenModel.getArtifactId()).replaceAll("\\.", "/");
+    public boolean isValidPackageName(String name) {
+        Pattern pattern = Pattern.compile(VALID_REGEX, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(name);
+        return matcher.matches();
     }
-
 }

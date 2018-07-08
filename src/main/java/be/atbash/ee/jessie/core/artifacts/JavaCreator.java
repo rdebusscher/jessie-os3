@@ -31,7 +31,7 @@ public class JavaCreator extends AbstractCreator {
 
     public void createJavaFiles(JessieModel model) {
         Set<String> alternatives = model.getParameter(JessieModel.Parameter.ALTERNATIVES);
-        Map<String, String> variables = model.getParameter(JessieModel.Parameter.VARIABLES);
+        Map<String, String> variables = model.getVariables();
 
         if (model.getTechnologyStack() == TechnologyStack.JAVA_EE) {
             if (model.getSpecification().getViews().contains(ViewType.JSF)) {

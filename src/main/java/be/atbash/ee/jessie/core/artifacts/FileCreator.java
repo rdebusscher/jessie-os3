@@ -23,6 +23,8 @@ public abstract class FileCreator {
 
     public abstract void writeContents(String directory, String fileName, String contents);
 
+    public abstract void writeContents(String directory, String fileName, byte[] contents);
+
     public void createEmptyFile(String directory, String fileName) {
         writeContents(directory, fileName, "");
     }

@@ -38,7 +38,7 @@
         <deltaspike.version>1.8.1</deltaspike.version>
 
         <primefaces.version>6.1</primefaces.version>
-
+        <atbash-utils.version>0.9.1</atbash-utils.version>
     </properties>
     <dependencies>
         <dependency>
@@ -51,7 +51,13 @@
         <dependency>
             <groupId>be.atbash.utils</groupId>
             <artifactId>utils-se</artifactId>
-            <version>0.9.1</version>
+            <version>${atbash-utils.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>be.atbash.utils</groupId>
+            <artifactId>utils-cdi</artifactId>
+            <version>${atbash-utils.version}</version>
         </dependency>
 
         <dependency>

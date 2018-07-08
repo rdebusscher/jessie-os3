@@ -29,7 +29,7 @@ public class JSFCreator extends AbstractCreator {
 
     public void createJSFFiles(JessieModel model) {
         Set<String> alternatives = model.getParameter(JessieModel.Parameter.ALTERNATIVES);
-        Map<String, String> variables = model.getParameter(JessieModel.Parameter.VARIABLES);
+        Map<String, String> variables = model.getVariables();
 
         String webInfDirectory = model.getDirectory() + "/" + MavenCreator.SRC_MAIN_WEBAPP + "/WEB-INF";
         directoryCreator.createDirectory(webInfDirectory);

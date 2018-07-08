@@ -20,7 +20,7 @@ import java.util.Set;
 
 public enum MicroProfileVersion {
 
-    NONE(null, ""), MP12("1.2", "MP 1.2");
+    NONE(null, ""), MP12("1.2", "MP 1.2"), MP13("1.3", "MP 1.3");
 
     private String code;
     private String label;

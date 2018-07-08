@@ -31,7 +31,7 @@
         Java EE version : #{jessieDataBean.javaEEVersion} <br/>
     </h:panelGroup>
     <h:panelGroup rendered="#{jessieDataBean.technologyStackTypeMP}">
-        MicroProfile version : 1.2 <br/>
+        MicroProfile version : #{jessieDataBean.mpVersion} <br/>
     </h:panelGroup>
     Java SE version : #{jessieDataBean.javaSEVersion} <br/>
     <h:panelGroup rendered="#{jessieDataBean.technologyStackTypeJavaEE}">
@@ -53,6 +53,7 @@
     <h:panelGroup rendered="#{not jessieDataBean.technologyStackTypeJavaEE and jessieDataBean.activeScreen == 'build'}">
         With the following option <br/>
         MicroProfile Server : #{jessieDataBean.supportedServer} <br/>
+        Examples for #{jessieDataBean.selectedSpecDescription} <br/>
     </h:panelGroup>
     <hr/>
 </ui:composition>

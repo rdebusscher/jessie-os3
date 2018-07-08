@@ -1,4 +1,4 @@
-package [# th:text="${java_package}"/].fault;
+package [# th:text="${java_package}"/].resilient;
 
 import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.eclipse.microprofile.faulttolerance.Timeout;

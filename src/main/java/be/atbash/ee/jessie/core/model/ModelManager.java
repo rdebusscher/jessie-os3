@@ -67,13 +67,15 @@ public class ModelManager {
         List<JessieAddon> allAddons = determineAddons(model);
         model.addParameter(JessieModel.Parameter.ADDONS, allAddons);
 
+        setAddonOptions(allAddons, model.getOptions());
+
         modelValidation.validateByAddons(model);
 
         Set<String> alternatives = determineAlternatives(model, allAddons);
         model.addParameter(JessieModel.Parameter.ALTERNATIVES, alternatives);
 
         Map<String, String> variables = templateVariableProvider.determineVariables(model);
-        model.addParameter(JessieModel.Parameter.VARIABLES, variables);
+        model.addVariables(variables);
     }
 
     private Set<String> determineAlternatives(JessieModel model, List<JessieAddon> allAddons) {
@@ -107,7 +109,6 @@ public class ModelManager {
                         .map(JessieAddon::addonName)
                         .collect(Collectors.toList()));
 
-        setAddonOptions(allAddons, model.getOptions());
         return allAddons;
     }
 
@@ -121,13 +122,14 @@ public class ModelManager {
         }
     }
 
-    private void addDefaultOption(Map<String, String> options, String key, String value) {
-        String optionValue;
+    private void addDefaultOption(Map<String, OptionValue> options, String key, String value) {
+        OptionValue optionValue;
         if (!options.containsKey(key)) {
-            optionValue = value;
+            optionValue = new OptionValue(value);
         } else {
+
             optionValue = options.get(key);
-            optionValue += ", " + value;
+            optionValue.addValue(value);
         }
         options.put(key, optionValue);
     }
@@ -171,12 +173,12 @@ public class ModelManager {
         return allAddons;
     }
 
-    private void setAddonOptions(List<JessieAddon> allAddons, Map<String, String> options) {
+    private void setAddonOptions(List<JessieAddon> allAddons, Map<String, OptionValue> options) {
 
         for (JessieAddon addon : allAddons) {
-            Map<String, String> addonOptions = new HashMap<>();
+            Map<String, OptionValue> addonOptions = new HashMap<>();
             int beginIndex = addon.addonName().length() + 1; // +1 for the .
-            for (Map.Entry<String, String> optionEntry : options.entrySet()) {
+            for (Map.Entry<String, OptionValue> optionEntry : options.entrySet()) {
 
                 if (optionEntry.getKey().startsWith(addon.addonName() + '.')) {
                     addonOptions.put(optionEntry.getKey().substring(beginIndex), optionEntry.getValue());
@@ -188,11 +190,11 @@ public class ModelManager {
 
     }
 
-    private boolean isAddonDisabled(String addonName, Map<String, String> options) {
+    private boolean isAddonDisabled(String addonName, Map<String, OptionValue> options) {
         boolean result = false;
         String optionName = addonName + ".disable";
         if (options.containsKey(optionName)) {
-            Boolean addonDisabled = Boolean.valueOf(options.get(optionName));
+            Boolean addonDisabled = Boolean.valueOf(options.get(optionName).getSingleValue());
             if (addonDisabled) {
                 result = true;
             }

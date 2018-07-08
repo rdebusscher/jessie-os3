@@ -29,7 +29,7 @@ public class CDICreator extends AbstractCreator {
 
     public void createCDIFilesForWeb(JessieModel model) {
         Set<String> alternatives = model.getParameter(JessieModel.Parameter.ALTERNATIVES);
-        Map<String, String> variables = model.getParameter(JessieModel.Parameter.VARIABLES);
+        Map<String, String> variables = model.getVariables();
 
         String webInfDirectory = model.getDirectory() + "/" + MavenCreator.SRC_MAIN_WEBAPP + "/WEB-INF";
         directoryCreator.createDirectory(webInfDirectory);
@@ -41,7 +41,7 @@ public class CDICreator extends AbstractCreator {
 
     public void createCDIFilesForJar(JessieModel model) {
         Set<String> alternatives = model.getParameter(JessieModel.Parameter.ALTERNATIVES);
-        Map<String, String> variables = model.getParameter(JessieModel.Parameter.VARIABLES);
+        Map<String, String> variables = model.getVariables();
 
         String metaInfDirectory = model.getDirectory() + "/" + MavenCreator.SRC_MAIN_RESOURCES + "/META-INF";
         directoryCreator.createDirectory(metaInfDirectory);

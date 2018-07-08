@@ -16,6 +16,7 @@
 package be.atbash.ee.jessie.core;
 
 import be.atbash.ee.jessie.core.model.JessieModel;
+import be.atbash.ee.jessie.core.model.TechnologyStack;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -37,6 +38,9 @@ public class TemplateVariableProvider {
         String artifactId = model.getMaven().getArtifactId();
         result.put("artifact", StringUtils.capitalize(artifactId));
 
+        if (model.getTechnologyStack() == TechnologyStack.MP) {
+            result.put("mp_version", model.getSpecification().getMicroProfileVersion().getCode());
+        }
         return result;
 
     }
