@@ -29,7 +29,7 @@ The example class **ConfigTestController** shows you how to inject a configurati
 
 Add resilient features to your applications like TimeOut, RetryPolicy, Fallback, bulkhead and circuit breaker. Specification [here](https://microprofile.io/project/eclipse/microprofile-fault-tolerance)
 
-The example class **FaultToleranceController** has an example of a FallBack mechanism where an fallback result is returned when the execution takes too long.
+The example class **ResilienceController** has an example of a FallBack mechanism where an fallback result is returned when the execution takes too long.
 [/]
 
 [# th:if="${mp_health_checks}"]
@@ -43,7 +43,7 @@ The class **ServiceHealthCheck** contains an example of a custom check which can
 [# th:if="${mp_health_metrics}"]
 ### Metrics
 
-The Metrics exports _Telemetric_ data in a uniform way of system and custom resources. Specification [here](https://microprofile.io/project/eclipse/microprofile-health)
+The Metrics exports _Telemetric_ data in a uniform way of system and custom resources. Specification [here](https://microprofile.io/project/eclipse/microprofile-metrics)
 
 The example class **MetricController** contains an example how you can measure the execution time of a request.  The index page also contains a link to the metric page (with all metric info)
 [/]

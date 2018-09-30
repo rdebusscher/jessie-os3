@@ -48,11 +48,13 @@
         <h:panelGroup rendered="#{jessieDataBean.octopusFeature}">
             Octopus
         </h:panelGroup>
+        <br/>#{jessieDataBean.beansxmlModelDescription}
         <br/>
     </h:panelGroup>
     <h:panelGroup rendered="#{not jessieDataBean.technologyStackTypeJavaEE and jessieDataBean.activeScreen == 'build'}">
         With the following option <br/>
         MicroProfile Server : #{jessieDataBean.supportedServer} <br/>
+        #{jessieDataBean.beansxmlModelDescription}<br/>
         Examples for #{jessieDataBean.selectedSpecDescription} <br/>
     </h:panelGroup>
     <hr/>

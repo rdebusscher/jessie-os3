@@ -15,10 +15,7 @@
  */
 package be.atbash.ee.jessie;
 
-import be.atbash.ee.jessie.core.model.JavaEEVersion;
-import be.atbash.ee.jessie.core.model.JavaSEVersion;
-import be.atbash.ee.jessie.core.model.MicroProfileVersion;
-import be.atbash.ee.jessie.core.model.TechnologyStack;
+import be.atbash.ee.jessie.core.model.*;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -35,6 +32,7 @@ public class DataBean {
     private List<SelectItem> javaEEItems;
     private List<SelectItem> javaSEItems;
     private List<SelectItem> mpItems;
+    private List<SelectItem> beansxmlItems;
 
     @PostConstruct
     public void init() {
@@ -43,6 +41,14 @@ public class DataBean {
         defineJavaSEItems();
 
         defineMPVersions();
+        defineBeanxmlItems();
+    }
+
+    private void defineBeanxmlItems() {
+        beansxmlItems = new ArrayList<>();
+        for (BeansXMLMode beansXMLMode : BeansXMLMode.values()) {
+            beansxmlItems.add(new SelectItem(beansXMLMode.getMode(), beansXMLMode.getMode()));
+        }
     }
 
     private void defineMPVersions() {
@@ -90,4 +96,7 @@ public class DataBean {
         return mpItems;
     }
 
+    public List<SelectItem> getBeansxmlItems() {
+        return beansxmlItems;
+    }
 }

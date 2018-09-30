@@ -18,7 +18,7 @@
 
 [# th:if="${mp_fault_tolerance}"]
 <h3>Fault tolerance</h3>
-<a href="data/fault" target="_blank" >Fallback after timeout</a> <br/>
+<a href="data/resilience" target="_blank" >Fallback after timeout</a> <br/>
 [/]
 
 [# th:if="${mp_health_checks}"]
@@ -39,7 +39,7 @@ Look at readme.md on how to test protected endpoint.
 
 [# th:if="${mp_open_API}"]
 <h3>Open API</h3>
-<a href="openapi" target="_blank" >Open API Documentation</a> <br/>
+<a href="../openapi" target="_blank" >Open API Documentation</a> <br/>
 [/]
 
 [# th:if="${mp_open_tracing}"]

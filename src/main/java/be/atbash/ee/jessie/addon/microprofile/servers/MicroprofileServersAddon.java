@@ -210,7 +210,7 @@ public class MicroprofileServersAddon extends AbstractAddon {
 
         }
 
-        if (supportedServer == SupportedServer.WILDFLY_SWARM) {
+        if (supportedServer == SupportedServer.WILDFLY_SWARM || supportedServer == SupportedServer.THORNTAIL_V2) {
             // Specific files for Auth-JWT
             String resourceDirectory = getResourceDirectory(model);
             directoryCreator.createDirectory(resourceDirectory);
@@ -270,7 +270,7 @@ public class MicroprofileServersAddon extends AbstractAddon {
             String faultDirectory = model.getDirectory() + "/" + rootJava + "/resilient";
             directoryCreator.createDirectory(faultDirectory);
 
-            processTemplateFile(faultDirectory, "FaultToleranceController.java", alternatives, variables);
+            processTemplateFile(faultDirectory, "ResilienceController.java", alternatives, variables);
         }
 
         if (microprofileSpecs.contains(MicroprofileSpec.JWT_AUTH)) {
